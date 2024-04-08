@@ -84,7 +84,11 @@ function App() {
         setLoading(true);
         try {
             if (canvasRef) {
-                const canvas = await html2canvas(canvasRef.current as HTMLElement);
+                const canvas = await html2canvas(canvasRef.current as HTMLElement, {
+                    imageTimeout: 15000, //newline
+                    scale: 3, //newline
+                    useCORS: true,
+                });
                 const dataURL = canvas.toDataURL("image/png");
                 const link = document.createElement("a");
                 link.href = dataURL;
