@@ -131,6 +131,9 @@ function App() {
             <Button style={{ cursor: "pointer" }} onClick={downloadImage} disabled={previewImage === ""}>
                 <a>{isLoading ? "Downloading..." : "Download"}</a>
             </Button>
+            <a href="https://github.com/" target="_blank">
+                Github
+            </a>
             {/* <ImageCropper previewImage={previewImage} onClickFn={downloadImage} /> */}
         </Flex>
     );
