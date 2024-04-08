@@ -1,6 +1,6 @@
 import { Button, Dialog, Flex } from "@radix-ui/themes";
 import * as React from "react";
-import ReactCrop, { centerCrop, type Crop, makeAspectCrop } from "react-image-crop";
+import ReactCrop, { type Crop } from "react-image-crop";
 
 interface Props {
     onClickFn: () => Promise<void>;
@@ -10,24 +10,24 @@ interface Props {
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 
-export const ImageCropper: React.FC<Props> = ({ onClickFn, previewImage }) => {
+export const ImageCropper: React.FC<Props> = () => {
     const [crop, setCrop] = React.useState<Crop>();
-    const onImageLoad = (e: Event) => {
-        const { width, height } = e.currentTarget as HTMLImageElement;
-        const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
+    // const onImageLoad = (e: React.ReactEventHandler<HTMLImageElement>) => {
+    //     const { width, height } = (e as HTMLImageElement).currentTarget as HTMLImageElement;
+    //     const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
 
-        const crop = makeAspectCrop(
-            {
-                unit: "%",
-                width: cropWidthInPercent,
-            },
-            ASPECT_RATIO,
-            width,
-            height
-        );
-        const centeredCrop = centerCrop(crop, width, height);
-        setCrop(centeredCrop);
-    };
+    //     const crop = makeAspectCrop(
+    //         {
+    //             unit: "%",
+    //             width: cropWidthInPercent,
+    //         },
+    //         ASPECT_RATIO,
+    //         width,
+    //         height
+    //     );
+    //     const centeredCrop = centerCrop(crop, width, height);
+    //     setCrop(centeredCrop);
+    // };
     return (
         <Dialog.Root>
             <Dialog.Trigger>
@@ -40,7 +40,7 @@ export const ImageCropper: React.FC<Props> = ({ onClickFn, previewImage }) => {
                 </Dialog.Description>
                 <Flex direction="column" gap="3">
                     <ReactCrop crop={crop} circularCrop keepSelection aspect={ASPECT_RATIO} minWidth={MIN_DIMENSION} onChange={(c) => setCrop(c)}>
-                        <img src={previewImage} width="100%" onLoad={onImageLoad} />
+                        {/* <img src={previewImage} width="100%" onLoad={onImageLoad} /> */}
                     </ReactCrop>
                 </Flex>
             </Dialog.Content>
