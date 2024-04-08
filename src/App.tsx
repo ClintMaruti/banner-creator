@@ -84,6 +84,10 @@ function App() {
         setLoading(true);
         try {
             if (canvasRef) {
+                if (screen.width < 1024) {
+                    // const vp = document.getElementById("viewportMeta")?.getAttribute("content");
+                    document.getElementById("viewportMeta")?.setAttribute("content", "width=800");
+                }
                 const canvas = await html2canvas(canvasRef.current as HTMLElement, {
                     imageTimeout: 15000, //newline
                     scale: 3, //newline
@@ -97,25 +101,7 @@ function App() {
                 link.click();
                 setLoading(false);
                 URL.revokeObjectURL(link.href);
-                if (navigator.userAgent.match(/mobile/i)) {
-                    const message = `Tap the link to download image`;
-                    const container = document.createElement("div");
-                    container.textContent = message;
-                    container.appendChild(link);
-                    container.style.display = "flex";
-                    container.style.justifyContent = "center";
-                    container.style.alignItems = "center";
-                    container.style.height = "100vh";
-                    document.body.appendChild(container);
-                } else {
-                    link.style.display = "none";
-                    document.body.appendChild(link);
-                    link.click();
-                    setTimeout(() => {
-                        window.URL.revokeObjectURL(link.href);
-                        document.body.removeChild(link);
-                    }, 100); // Adjust delay if needed
-                }
+                // document.getElementById("viewportMeta")?.setAttribute("content", vp);
             }
         } catch (error) {
             setLoading(false);
