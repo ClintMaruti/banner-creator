@@ -83,9 +83,9 @@ function App() {
     const downloadImage = async () => {
         setLoading(true);
         try {
-            if (canvasRef && window.onload) {
+            if (canvasRef) {
                 const canvas = await html2canvas(canvasRef.current as HTMLElement, {
-                    imageTimeout: 20000, //newline
+                    imageTimeout: 15000, //newline
                     scale: 3, //newline
                     useCORS: true,
                 });
