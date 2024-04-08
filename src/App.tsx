@@ -93,6 +93,25 @@ function App() {
                 link.click();
                 setLoading(false);
                 URL.revokeObjectURL(link.href);
+                if (navigator.userAgent.match(/mobile/i)) {
+                    const message = `Tap the link to download image`;
+                    const container = document.createElement("div");
+                    container.textContent = message;
+                    container.appendChild(link);
+                    container.style.display = "flex";
+                    container.style.justifyContent = "center";
+                    container.style.alignItems = "center";
+                    container.style.height = "100vh";
+                    document.body.appendChild(container);
+                } else {
+                    link.style.display = "none";
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(link.href);
+                        document.body.removeChild(link);
+                    }, 100); // Adjust delay if needed
+                }
             }
         } catch (error) {
             setLoading(false);
