@@ -88,9 +88,11 @@ function App() {
                 const dataURL = canvas.toDataURL("image/png");
                 const link = document.createElement("a");
                 link.href = dataURL;
+                link.target = "_blank";
                 link.download = "dunamis_crusade.png";
                 link.click();
                 setLoading(false);
+                URL.revokeObjectURL(link.href);
             }
         } catch (error) {
             setLoading(false);
@@ -122,7 +124,7 @@ function App() {
                 <TextField.Slot></TextField.Slot>
             </TextField.Root>
             <Button style={{ cursor: "pointer" }} onClick={downloadImage} disabled={previewImage === ""}>
-                {isLoading ? "Downloading..." : "Download"}
+                <a>{isLoading ? "Downloading..." : "Download"}</a>
             </Button>
             {/* <ImageCropper previewImage={previewImage} onClickFn={downloadImage} /> */}
         </Flex>
