@@ -83,13 +83,9 @@ function App() {
     const downloadImage = async () => {
         setLoading(true);
         try {
-            if (canvasRef) {
-                if (screen.width < 1024) {
-                    // const vp = document.getElementById("viewportMeta")?.getAttribute("content");
-                    document.getElementById("viewportMeta")?.setAttribute("content", "width=800");
-                }
+            if (canvasRef && window.onload) {
                 const canvas = await html2canvas(canvasRef.current as HTMLElement, {
-                    imageTimeout: 15000, //newline
+                    imageTimeout: 20000, //newline
                     scale: 3, //newline
                     useCORS: true,
                 });
