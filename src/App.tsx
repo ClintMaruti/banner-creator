@@ -1,7 +1,6 @@
 import { Box, Button, Container, Flex, Text, TextField } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import { toBlob } from "html-to-image";
-import html2canvas from "html2canvas";
 import { useRef, useState } from "react";
 import "react-image-crop/dist/ReactCrop.css";
 import styled from "styled-components";
@@ -38,16 +37,6 @@ const ImageBox = styled.div<ImageBoxProps>`
     overflow: hidden;
 `;
 
-const Image = styled.img`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 99999999999;
-    transform: translate(-50%, -50%);
-    width: 100%; /* ensure the image covers the entire div */
-    height: auto; /* maintain aspect ratio */
-`;
-
 const ImageBtn = styled.button`
     display: inline-flex;
     justify-content: center;
@@ -79,11 +68,6 @@ const StyledText = styled.p`
     }
 `;
 
-const Imge = styled.img`
-    position: absolute;
-    width: 20%;
-`;
-
 function App() {
     const [previewImage, setPreviewImage] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(false);
@@ -108,29 +92,29 @@ function App() {
         }
         setPreviewImage(URL.createObjectURL(selectedFiles?.[0]));
     };
-    const downloadImage = async () => {
-        setLoading(true);
-        try {
-            if (canvasRef) {
-                const canvas = await html2canvas(canvasRef.current as HTMLElement, {
-                    imageTimeout: 15000,
-                    scale: 3,
-                    useCORS: true,
-                });
-                const dataURL = canvas.toDataURL("image/png");
-                const link = document.createElement("a");
-                link.href = dataURL;
-                link.target = "_blank";
-                link.download = "dunamis_crusade.png";
-                link.click();
-                setLoading(false);
-                URL.revokeObjectURL(link.href);
-            }
-        } catch (error) {
-            setLoading(false);
-            throw console.error(error);
-        }
-    };
+    // const downloadImage = async () => {
+    //     setLoading(true);
+    //     try {
+    //         if (canvasRef) {
+    //             const canvas = await html2canvas(canvasRef.current as HTMLElement, {
+    //                 imageTimeout: 15000,
+    //                 scale: 3,
+    //                 useCORS: true,
+    //             });
+    //             const dataURL = canvas.toDataURL("image/png");
+    //             const link = document.createElement("a");
+    //             link.href = dataURL;
+    //             link.target = "_blank";
+    //             link.download = "dunamis_crusade.png";
+    //             link.click();
+    //             setLoading(false);
+    //             URL.revokeObjectURL(link.href);
+    //         }
+    //     } catch (error) {
+    //         setLoading(false);
+    //         throw console.error(error);
+    //     }
+    // };
 
     const htmlToImageConvert = () => {
         if (canvasRef.current) {
