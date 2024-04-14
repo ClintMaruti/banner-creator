@@ -1,6 +1,6 @@
 import { Box, Button, Container, Flex, Text, TextField } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
-import { toPng } from "html-to-image";
+import { toBlob } from "html-to-image";
 import html2canvas from "html2canvas";
 import { useRef, useState } from "react";
 import "react-image-crop/dist/ReactCrop.css";
@@ -26,7 +26,7 @@ const ImageBox = styled.div<ImageBoxProps>`
     z-index: 9999999;
     border-radius: 50%;
     background-color: #fff;
-    background-image: url(${(props) => props.previewImg});
+    /* background-image: url(${(props) => props.previewImg}); */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
@@ -35,6 +35,17 @@ const ImageBox = styled.div<ImageBoxProps>`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+`;
+
+const Image = styled.img`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 99999999999;
+    transform: translate(-50%, -50%);
+    width: 100%; /* ensure the image covers the entire div */
+    height: auto; /* maintain aspect ratio */
 `;
 
 const ImageBtn = styled.button`
@@ -68,6 +79,11 @@ const StyledText = styled.p`
     }
 `;
 
+const Imge = styled.img`
+    position: absolute;
+    width: 20%;
+`;
+
 function App() {
     const [previewImage, setPreviewImage] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(false);
@@ -79,6 +95,17 @@ function App() {
     };
     const handleImgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = event.target.files as FileList;
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            if (typeof reader.result === "string") {
+                setPreviewImage(reader.result);
+            }
+        };
+
+        if (selectedFiles) {
+            reader.readAsDataURL(selectedFiles[0]);
+        }
         setPreviewImage(URL.createObjectURL(selectedFiles?.[0]));
     };
     const downloadImage = async () => {
@@ -108,12 +135,19 @@ function App() {
     const htmlToImageConvert = () => {
         if (canvasRef.current) {
             setLoading(true);
-            toPng(canvasRef?.current, { cacheBust: false })
-                .then((dataUrl) => {
-                    const link = document.createElement("a");
-                    link.download = "dunamis-crusade.png";
-                    link.href = dataUrl;
-                    link.click();
+            toBlob(canvasRef?.current, { cacheBust: false })
+                .then((blob) => {
+                    // if (window.saveAs) {
+                    //     window.saveAs(blob, "dunamis-crusade.png");
+                    // } else {
+                    //     saveAs(blob, "dunamis-crusade.png");
+                    // }
+                    if (blob) {
+                        const link = document.createElement("a");
+                        link.download = "circle_image.png";
+                        link.href = URL.createObjectURL(blob);
+                        link.click();
+                    }
                     setLoading(false);
                 })
                 .catch((err) => {
@@ -137,6 +171,7 @@ function App() {
                         <ImageBox previewImg={previewImage}>
                             {!previewImage && <ImageBtn onClick={handleClick}>+</ImageBtn>}
                             <input type="file" ref={fileInput} style={{ display: "none" }} onChange={handleImgChange} />
+                            {previewImage && <img src={previewImage} style={{ position: "absolute", top: "50%", left: "50%", zIndex: "99999999999", width: "100%", height: "auto", transform: "translate(-50%, -50%)" }} />}
                         </ImageBox>
                         <StyledText>{name}</StyledText>
                         <img src={Banner} width="100%" />
