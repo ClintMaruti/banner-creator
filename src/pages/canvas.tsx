@@ -1,11 +1,78 @@
+// import { useEffect, useRef, useState } from "react";
+// import styled from "styled-components";
+// import BannerImg from "../assets/banner.png";
+
+// const Container = styled.div`
+//     display: flex;
+//     justify-content: center;
+// `;
+
+// export const Canvas = () => {
+//     const canvasRef = useRef(null);
+//     const fileInput = useRef<HTMLInputElement>(null);
+//     const [imageUrl, setImageUrl] = useState<string | null>(null);
+//     useEffect(() => {
+//         const canvas = canvasRef.current as unknown as HTMLCanvasElement;
+//         if (!canvas) return;
+
+//         const context = canvas.getContext("2d");
+//         if (!context) return;
+
+//         const image = new Image();
+//         image.src = BannerImg;
+//         image.onload = () => {
+//             const aspectRatio = image.width / image.height;
+//             const canvasWidth = window.innerWidth;
+//             const canvasHeight = canvasWidth / aspectRatio;
+//             canvas.width = canvasWidth;
+//             canvas.height = canvasHeight;
+//             context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+//             const centerX = canvas.width / 2;
+//             const centerY = Math.floor(canvas.height / 1.365);
+//             const radius = centerX / 1.5;
+//             context.beginPath();
+//             context.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
+//             context.fillStyle = "blue";
+//             context.fill();
+//             if (imageUrl) {
+//                 const imageAspectRatio = image.naturalWidth / image.naturalHeight;
+//                 // Scale image to fit inside circle
+//                 let imageWidth;
+//                 let imageHeight;
+//                 if (imageAspectRatio > 1) {
+//                     // Wider image
+//                     imageWidth = radius * 2;
+//                     imageHeight = imageWidth / imageAspectRatio;
+//                 } else {
+//                     // Taller image
+//                     imageHeight = radius * 2;
+//                     imageWidth = imageHeight * imageAspectRatio;
+//                 }
+//                 const slctdImg = new Image();
+//                 slctdImg.src = imageUrl as string;
+//                 context.drawImage(slctdImg, centerX - imageWidth / 2, centerY - imageHeight / 2, imageWidth, imageHeight);
+//             }
+//         };
+//     }, [imageUrl]);
+//     const handleImgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//         const selectedFiles = event.target.files as FileList;
+//         setImageUrl(URL.createObjectURL(selectedFiles?.[0]));
+//     };
+//     return (
+//         <Container>
+//             <canvas ref={canvasRef} style={{ height: "100vh" }}></canvas>
+//             <input type="file" ref={fileInput} onChange={handleImgChange} />
+//         </Container>
+//     );
+// };
+
 import { Box, Button, Container, Flex, Text, TextField } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
-import { toPng } from "html-to-image";
 import html2canvas from "html2canvas";
 import { useRef, useState } from "react";
 import "react-image-crop/dist/ReactCrop.css";
 import styled from "styled-components";
-import Banner from "./assets/banner.png";
+import Banner from "../assets/banner.png";
 
 const ImageContainer = styled.div`
     position: relative;
@@ -68,7 +135,7 @@ const StyledText = styled.p`
     }
 `;
 
-function App() {
+export function Canvas() {
     const [previewImage, setPreviewImage] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(false);
     const fileInput = useRef<HTMLInputElement>(null);
@@ -86,8 +153,8 @@ function App() {
         try {
             if (canvasRef) {
                 const canvas = await html2canvas(canvasRef.current as HTMLElement, {
-                    imageTimeout: 15000,
-                    scale: 3,
+                    imageTimeout: 15000, //newline
+                    scale: 3, //newline
                     useCORS: true,
                 });
                 const dataURL = canvas.toDataURL("image/png");
@@ -98,28 +165,11 @@ function App() {
                 link.click();
                 setLoading(false);
                 URL.revokeObjectURL(link.href);
+                // document.getElementById("viewportMeta")?.setAttribute("content", vp);
             }
         } catch (error) {
             setLoading(false);
             throw console.error(error);
-        }
-    };
-
-    const htmlToImageConvert = () => {
-        if (canvasRef.current) {
-            setLoading(true);
-            toPng(canvasRef?.current, { cacheBust: false })
-                .then((dataUrl) => {
-                    const link = document.createElement("a");
-                    link.download = "dunamis-crusade.png";
-                    link.href = dataUrl;
-                    link.click();
-                    setLoading(false);
-                })
-                .catch((err) => {
-                    console.log(err);
-                    setLoading(false);
-                });
         }
     };
     return (
@@ -146,11 +196,13 @@ function App() {
             <TextField.Root disabled={previewImage === ""} placeholder="Please Enter your name" type="text" value={name} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setName(event.target.value)}>
                 <TextField.Slot></TextField.Slot>
             </TextField.Root>
-            <Button style={{ cursor: "pointer" }} onClick={htmlToImageConvert} disabled={previewImage === ""}>
+            <Button style={{ cursor: "pointer" }} onClick={downloadImage} disabled={previewImage === ""}>
                 <a>{isLoading ? "Downloading..." : "Download"}</a>
             </Button>
+            <a href="https://github.com/" target="_blank">
+                Github
+            </a>
+            {/* <ImageCropper previewImage={previewImage} onClickFn={downloadImage} /> */}
         </Flex>
     );
 }
-
-export default App;
